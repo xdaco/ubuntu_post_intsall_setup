@@ -8,6 +8,7 @@ export SCRIPT_PATH=$SCRIPT_PATH
 ###########################
 # Local Console Colours
 ############################
+
 BOLD="\e[1m"
 CYAN="\e[36m"
 GREEN="\e[32m"
@@ -32,6 +33,11 @@ if [ "$EUID" -ne 0 ]; then
 fi
 pretty_header "SOFTWARE REPOSITORY UPDATE"
 pretty_print "Updating Software catalog. Please wait......"
+## Adding 32bit software support
+sudo dpkg --add-architecture i386
+## Adding Google Chrome repository
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
 apt update >/dev/null 2>&1
 pretty_print "............................................."
 apt update >/dev/null 2>&1
@@ -40,16 +46,22 @@ apt upgrade -y >/dev/null 2>&1
 ############################
 # Essenstial Package Install
 ############################
-ESSENTIAL_PACKAGE_LIST="build-essential ubuntu-restricted-extras vlc gimp calibre pinta flatpak gnome-software-plugin-flatpak gnome-tweak-tool synaptic shutter tlp tlp-rdw snapd at git can-utils x11vnc "
+ESSENTIAL_PACKAGE_LIST="build-essential ubuntu-restricted-extras libavcodec-extra libdvd-pkg gufw ppa-purge google-chrome-stable gnome-tweak-tool bleachbit vlc gimp calibre pinta flatpak gnome-software-plugin-flatpak gnome-tweak-tool synaptic shutter tlp tlp-rdw snapd at git can-utils x11vnc "
 for PACKAGE_NAME in $ESSENTIAL_PACKAGE_LIST; do
     install_package $PACKAGE_NAME
 done
-# wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-# wget https://repo.skype.com/latest/skypeforlinux-64.deb
-# dpkg -i skypeforlinux-64.deb
-# apt-get install -f
-# dpkg -i google-chrome-stable_current_amd64.deb
-# apt-get install -f
+echo -e ${GREEN}
+sudo tlp start
+echo -e ""${RESET}
+## Install skype
+SNAP_CLASSIC_LIST="sublime-text skype vscode slack"
+for PACKAGE_NAME in $SNAP_CLASSIC_LIST; do
+    install_snap_package $PACKAGE_NAME "--classic"
+done
+SNAP_LIST="spotify ghex-udt clementine"
+for PACKAGE_NAME in $SNAP_LIST; do
+    install_snap_package $PACKAGE_NAME
+done
 ##Additional package installation
 pretty_header "POWERLINE INSTALLATION"
 pretty_print "Do you want to install powerline-status? Press 'Y' or 'y' to confirm."
@@ -61,17 +73,19 @@ elif [[ $ans_powerline == "Y" || $ans_powerline == "y" ]]; then
     pretty_header "Installating powerline-status and its dependencies...."
     install_pip_package "powerline-status"
     install_pip_package "powerline-gitstatus"
-    install_pip_package "defusedxml"
     ##Powerline configuration
     cp powerline_theme.json /usr/lib/python2.7/site-packages/powerline/config_files/themes/shell/default.json
     cp powerline_colorscheme.json /usr/lib/python2.7/site-packages/powerline/config_files/colorschemes/shell/default.json
-    LINE_1='export ENV=/etc/profile'
-    add_line "${LINE_1}" /etc/profile "Additional Powerline Configuration for root shell"
-    LINE_2='if [ -f /usr/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh ]; then source /usr/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh; fi'
-    add_line "${LINE_2}" /etc/profile "Powerline Configuration"
-    add_line "${LINE_2}" ~/.bashrc "Powerline Configuration"
-    cp powerline_fonts/* /usr/share/fonts/ttf/
+    LINE='if [ -f /usr/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh ]; then source /usr/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh; fi'
+    add_line "${LINE}" ~/.bashrc "Powerline Configuration"
+    #Install Powerline Fonts
     echo -e ${GREEN}
+    #install_package fonts-powerline
+    git clone https://github.com/xdaco/powerline-fonts.git
+    cd fonts
+    ./install.sh
+    cd ..
+    rm -rf fonts
     powerline-daemon --replace
     source /etc/profile
     echo -e ""${RESET}
