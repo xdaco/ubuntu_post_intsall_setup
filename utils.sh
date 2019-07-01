@@ -3,14 +3,13 @@
 ###########################
 # Colours
 ###########################
-BOLD="\e[1m"
 
+BOLD="\e[1m"
 CYAN="\e[36m"
 GREEN="\e[32m"
 BLUE="\e[34m"
 RED="\e[31m"
 YELLOW="\e[33m"
-
 RESET="\e[0m"
 
 ###########################
@@ -132,30 +131,55 @@ print_system_info() {
 }
 
 install_package() {
-    COMMAND=$1
-    PACKAGE=$2
-    if ! command -v ${COMMAND} >/dev/null 2>&1; then
-        pretty_error "\"${COMMAND}\" not found. Installing now..."
-        opkg install ${PACKAGE} >/dev/null
-    fi
-    if ! command -v ${COMMAND} >/dev/null 2>&1; then
-        pretty_error "\"${COMMAND}\"............failed"
+    PACKAGE=$1
+    echo -e ${GREEN}
+    if dpkg -s ${PACKAGE} | grep -q -w "Status: install ok installed" >/dev/null 2>&1; then
+        echo -e ${YELLOW}
+        echo "\"${PACKAGE}\" already installed."
+        echo -e ""${RESET}
+        return
     else
-        pretty_print "\"${COMMAND}\"............installed"
+        pretty_error "\"${PACKAGE}\" not found. Installing now..."
+        sudo apt install ${PACKAGE} >/dev/null
+    fi
+    echo -e ${GREEN}
+    if dpkg -s ${PACKAGE} | grep -q -w "Status: install ok installed" >/dev/null 2>&1; then
+        pretty_print "\"${PACKAGE}\"............installed"
+    else
+        pretty_error "\"${PACKAGE}\"............failed"
     fi
 }
 
 install_pip_package() {
-    COMMAND=$1
-    PACKAGE=$2
-    if ! command -v ${COMMAND} >/dev/null 2>&1; then
-        pretty_error "\"${COMMAND}\" not found. Installing now..."
-        pip install ${PACKAGE} >/dev/null
-    fi
-    if ! command -v ${COMMAND} >/dev/null 2>&1; then
-        pretty_error "\"${COMMAND}\"............failed"
+    ##Additional pip flag
+    echo -e ${GREEN}
+    LEGACY_PIP_VERSION="9.0.1"
+    if grep $LEGACY_PIP_VERSION <<<$(pip --version | grep $LEGACY_PIP_VERSION); then
+        PIP_FLAG="--format=legacy"
     else
-        pretty_print "\"${COMMAND}\"............installed"
+        PIP_FLAG=""
+    fi
+    PACKAGE=$1
+    if pip list | grep -w ${PACKAGE} >/dev/null 2>&1; then
+        echo -e ${YELLOW}
+        echo "\"${PACKAGE}\" already installed."
+        echo -e ""${RESET}
+        return
+    else
+        echo -e ${RED}
+        echo "\"${PACKAGE}\" not found. Installing now..."
+        echo -e ${GREEN}
+        pip install ${PACKAGE} >/dev/null
+        echo -e ""${RESET}
+    fi
+    if pip list | grep -w ${PACKAGE} >/dev/null 2>&1; then
+        echo -e ${GREEN}
+        echo "\"${PACKAGE}\"............installed"
+        echo -e ""${RESET}
+    else
+        echo -e ${RED}
+        echo "\"${PACKAGE}\"............failed"
+        echo -e ""${RESET}
     fi
 }
 
