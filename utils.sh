@@ -183,6 +183,37 @@ install_pip_package() {
     fi
 }
 
+install_snap_package() {
+    echo -e ${GREEN}
+    PACKAGE=$1
+    CLASSIC_FLAG=$2
+    if snap list | grep -w ${PACKAGE} >/dev/null 2>&1; then
+        echo -e ${YELLOW}
+        echo "\"${PACKAGE}\" already installed."
+        echo -e ""${RESET}
+        return
+    else
+        echo -e ${RED}
+        echo "\"${PACKAGE}\" not found. Installing now..."
+        echo -e ${GREEN}
+        if [ -z "$2" ]; then
+            snap install ${PACKAGE} >/dev/null 2>&1
+        else
+            snap install ${PACKAGE} $CLASSIC_FLAG >/dev/null 2>&1
+        fi
+        echo -e ${RESET}
+    fi
+    if snap list | grep -w ${PACKAGE} >/dev/null 2>&1; then
+        echo -e ${GREEN}
+        echo "\"${PACKAGE}\"............installed"
+        echo -e ""${RESET}
+    else
+        echo -e ${RED}
+        echo "\"${PACKAGE}\"............failed"
+        echo -e ""${RESET}
+    fi
+}
+
 function add_line() {
     LINE="$1"
     FILE=$2
