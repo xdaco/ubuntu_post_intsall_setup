@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 ###########################
 # Colours
@@ -140,7 +140,7 @@ install_package() {
         return
     else
         pretty_error "\"${PACKAGE}\" not found. Installing now..."
-        sudo apt install ${PACKAGE} >/dev/null
+        apt install -y ${PACKAGE} >/dev/null 2>&1
     fi
     echo -e ${GREEN}
     if dpkg -s ${PACKAGE} | grep -q -w "Status: install ok installed" >/dev/null 2>&1; then
@@ -169,7 +169,7 @@ install_pip_package() {
         echo -e ${RED}
         echo "\"${PACKAGE}\" not found. Installing now..."
         echo -e ${GREEN}
-        pip install ${PACKAGE} >/dev/null
+        pip install ${PACKAGE} >/dev/null 2>&1
         echo -e ""${RESET}
     fi
     if pip list | grep -w ${PACKAGE} >/dev/null 2>&1; then
