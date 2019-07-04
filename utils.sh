@@ -20,6 +20,10 @@ pretty_print() {
     echo -e "=> ${GREEN}${1}${RESET}"
 }
 
+pretty_warn() {
+    echo -e "=> ${YELLOW}${1}${RESET}"
+}
+
 pretty_error() {
     echo ""
     echo -e "${RED}${1}${RESET}"
