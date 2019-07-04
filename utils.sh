@@ -218,5 +218,11 @@ function add_line() {
     LINE="$1"
     FILE=$2
     COMMENT=$3
+    FILEPATH=$FILE
+    FILENAME="$(basename "${FILEPATH}")"
+    DIR="$(dirname "${FILEPATH}")"
+    # create the dir, then the file
+    mkdir -p "${DIR}" && touch "${DIR}/${FILENAME}"
     grep -F -q "${LINE}" ${FILE} || (echo -e "## ${COMMENT}" >>${FILE} && echo ${LINE} >>${FILE})
 }
+
