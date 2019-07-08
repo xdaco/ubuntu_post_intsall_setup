@@ -38,17 +38,17 @@ sudo dpkg --add-architecture i386
 ## Adding Google Chrome repository
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
-apt update >/dev/null 2>&1
+apt update >/dev/null 2>&1 & show_spinner
 pretty_print "............................................."
-apt update >/dev/null 2>&1
+apt update >/dev/null 2>&1 & show_spinner
 pretty_print "Installaing available updates................"
-apt upgrade -y >/dev/null 2>&1
+apt upgrade -y >/dev/null 2>&1 & show_spinner
 ############################
 # Essenstial Package Install
 ############################
 ESSENTIAL_PACKAGE_LIST="build-essential ubuntu-restricted-extras libavcodec-extra libdvd-pkg gufw ppa-purge google-chrome-stable gnome-tweak-tool bleachbit vlc gimp calibre pinta flatpak gnome-software-plugin-flatpak gnome-tweak-tool synaptic shutter tlp tlp-rdw snapd at git can-utils x11vnc "
 for PACKAGE_NAME in $ESSENTIAL_PACKAGE_LIST; do
-    install_package $PACKAGE_NAME
+    install_package $PACKAGE_NAME & show_spinner
 done
 echo -e ${GREEN}
 sudo tlp start
