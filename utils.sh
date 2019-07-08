@@ -136,18 +136,18 @@ print_system_info() {
 
 install_package() {
     PACKAGE=$1
-    echo -e ${GREEN}
-    if dpkg -s ${PACKAGE} | grep -q -w "Status: install ok installed" >/dev/null 2>&1; then
-        echo -e ${YELLOW}
+    echo -e "${GREEN}"
+    if dpkg -s "${PACKAGE}" | grep -q -w "Status: install ok installed" >/dev/null 2>&1; then
+        echo -e "${YELLOW}"
         echo "\"${PACKAGE}\" already installed."
-        echo -e ""${RESET}
+        echo -e "${RESET}"
         return
     else
         pretty_error "\"${PACKAGE}\" not found. Installing now..."
-        apt install -y ${PACKAGE} >/dev/null 2>&1
+        apt install -y "${PACKAGE}" >/dev/null 2>&1
     fi
-    echo -e ${GREEN}
-    if dpkg -s ${PACKAGE} | grep -q -w "Status: install ok installed" >/dev/null 2>&1; then
+    echo -e "${GREEN}"
+    if dpkg -s "${PACKAGE}" | grep -q -w "Status: install ok installed" >/dev/null 2>&1; then
         pretty_print "\"${PACKAGE}\"............installed"
     else
         pretty_error "\"${PACKAGE}\"............failed"
@@ -156,65 +156,65 @@ install_package() {
 
 install_pip_package() {
     ##Additional pip flag
-    echo -e ${GREEN}
-    LEGACY_PIP_VERSION="9.0.1"
-    if grep $LEGACY_PIP_VERSION <<<$(pip --version | grep $LEGACY_PIP_VERSION); then
-        PIP_FLAG="--format=legacy"
-    else
-        PIP_FLAG=""
-    fi
+    echo -e "${GREEN}"
+    #LEGACY_PIP_VERSION="9.0.1"
+    # if grep $LEGACY_PIP_VERSION <<<$(pip --version | grep $LEGACY_PIP_VERSION); then
+    #     PIP_FLAG="--format=legacy"
+    # else
+    #     PIP_FLAG=""
+    # fi
     PACKAGE=$1
-    if pip list | grep -w ${PACKAGE} >/dev/null 2>&1; then
-        echo -e ${YELLOW}
+    if pip list | grep -w "${PACKAGE}" >/dev/null 2>&1; then
+        echo -e "${YELLOW}"
         echo "\"${PACKAGE}\" already installed."
-        echo -e ""${RESET}
+        echo -e "${RESET}"
         return
     else
-        echo -e ${RED}
+        echo -e "${RED}"
         echo "\"${PACKAGE}\" not found. Installing now..."
-        echo -e ${GREEN}
-        pip install ${PACKAGE} >/dev/null 2>&1
-        echo -e ""${RESET}
+        echo -e "${GREEN}"
+        pip install "${PACKAGE}" >/dev/null 2>&1
+        echo -e "${RESET}"
     fi
-    if pip list | grep -w ${PACKAGE} >/dev/null 2>&1; then
-        echo -e ${GREEN}
+    if pip list | grep -w "${PACKAGE}" >/dev/null 2>&1; then
+        echo -e "${GREEN}"
         echo "\"${PACKAGE}\"............installed"
-        echo -e ""${RESET}
+        echo -e "${RESET}"
     else
-        echo -e ${RED}
+        echo -e "${RED}"
         echo "\"${PACKAGE}\"............failed"
-        echo -e ""${RESET}
+        echo -e "${RESET}"
     fi
 }
 
 install_snap_package() {
-    echo -e ${GREEN}
+    echo -e "${GREEN}"
     PACKAGE=$1
     CLASSIC_FLAG=$2
-    if snap list | grep -w ${PACKAGE} >/dev/null 2>&1; then
-        echo -e ${YELLOW}
+    if snap list | grep -w "${PACKAGE}" >/dev/null 2>&1; then
+        echo -e "${YELLOW}"
         echo "\"${PACKAGE}\" already installed."
-        echo -e ""${RESET}
+        echo -e "${RESET}"
         return
     else
-        echo -e ${RED}
+        echo -e "${RED}"
         echo "\"${PACKAGE}\" not found. Installing now..."
-        echo -e ${GREEN}
+        echo -e "${GREEN}"
         if [ -z "$2" ]; then
-            snap install ${PACKAGE} >/dev/null 2>&1
+            snap install "${PACKAGE}" >/dev/null 2>&1
         else
-            snap install ${PACKAGE} $CLASSIC_FLAG >/dev/null 2>&1
+            snap install "${PACKAGE}" "$CLASSIC_FLAG" >/dev/null 2>&1
         fi
-        echo -e ${RESET}
+        echo -e "${RESET}"
     fi
-    if snap list | grep -w ${PACKAGE} >/dev/null 2>&1; then
-        echo -e ${GREEN}
+    if snap list | grep -w "${PACKAGE}" >/dev/null 2>&1; then
+        echo -e "${GREEN}"
         echo "\"${PACKAGE}\"............installed"
-        echo -e ""${RESET}
+        echo -e "${RESET}"
     else
-        echo -e ${RED}
+        echo -e "${RED}"
         echo "\"${PACKAGE}\"............failed"
-        echo -e ""${RESET}
+        echo -e "${RESET}"
     fi
 }
 
@@ -227,7 +227,7 @@ function add_line() {
     DIR="$(dirname "${FILEPATH}")"
     # create the dir, then the file
     mkdir -p "${DIR}" && touch "${DIR}/${FILENAME}"
-    grep -F -q "${LINE}" ${FILE} || (echo -e "## ${COMMENT}" >>${FILE} && echo ${LINE} >>${FILE})
+    grep -F -q "${LINE}" "${FILE}" || (echo -e "## ${COMMENT}" >>"${FILE}" && echo "${LINE}" >>"${FILE}")
 }
 
 show_spinner() {
